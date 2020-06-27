@@ -15,6 +15,7 @@ var TypeArr = []string{
 	"[]float64",
 	"[]string",
 	"[]int64",
+	"[]mixed", // [int or string or float or time... or mixed]
 }
 
 var TypeMap = map[string]int{}
@@ -110,6 +111,7 @@ func (v *Value) UnmarshalJSON(data []byte) error {
 	v.Time = vv.Time
 	v.TagValue = vv.TagValue
 	floatArr = vv.Float64Arr
+	//v.Float64Arr = vv.Float64Arr
 	v.IntArr = vv.IntArr
 	v.Int64Arr = vv.Int64Arr
 	v.StringArr = vv.StringArr
@@ -117,11 +119,11 @@ func (v *Value) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (v *Value) Init() {
+func (v *Value) Init(){
 	v.Float64Arr = make(map[float64]string)
 	v.IntArr = make(map[int]string)
 	v.Int64Arr = make(map[int64]string)
 	v.StringArr = make(map[string]string)
 }
 
-var layout = "2006-01-02 15:04:05"
+const layout = "2006-01-02 15:04:05"
