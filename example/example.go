@@ -10,6 +10,6 @@ func main() {
 	if err != nil{
 		panic(err)
 	}
-	match := engine.Match(map[string]string{"age":"1"})
-	log.Println(match)
+	match,err := engine.Match(map[string]string{"age":"1"})
+	log.Println(match,err)
 }
