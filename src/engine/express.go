@@ -102,14 +102,20 @@ func (t *TagInfo) TimeMatch(value string)  (result bool,err error)  {
 
 	tim, err := time.Parse(layout, value)
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	switch t.Symbol {
 	case "≥":
-		return t.Value.Time.Equal(tim)||t.Value.Time.After(tim),nil
+		return t.Value.Time.Equal(tim)||t.Value.Time.Before(tim),nil
+	case ">":
+		return t.Value.Time.Before(tim),nil
+	case "=":
+		return t.Value.Time.Equal(tim),nil
 	case "≤":
-		return t.Value.Time.Before(tim)||t.Value.Time.Equal(tim),nil
+		return t.Value.Time.After(tim)||t.Value.Time.Equal(tim),nil
+	case "<":
+		return t.Value.Time.After(tim),nil
 	default:
 		return false,nil
 	}
@@ -227,14 +233,17 @@ func (t *TagInfo) StringArrMatch(value string)  (result bool,err error)  {
 		for _, v := range data {
 			if _, ok := t.Value.StringArr[v]; ok {
 				result =  true
+			}else{
+				result = false
+				break
 			}
 		}
 
-		result =  false
 	case "∉":
 		for _, v := range data {
 			if _, ok := t.Value.StringArr[v]; ok {
 				result =  false
+				break
 			}
 		}
 
@@ -393,15 +402,15 @@ func (t *TagInfo) SetValueType() {
 func (v *Value) ParseValue() (err error){
 	switch v.Type {
 	case "float64":
-		v.Float64, _ = strconv.ParseFloat(v.Origin, 64)
+		v.Float64, err = strconv.ParseFloat(v.Origin, 64)
 	case "int":
-		v.Int, _ = strconv.Atoi(v.Origin)
+		v.Int, err = strconv.Atoi(v.Origin)
 	case "int64":
-		v.Int64, _ = strconv.ParseInt(v.Origin, 10, 64)
+		v.Int64, err = strconv.ParseInt(v.Origin, 10, 64)
 	case "string":
 		v.String = v.Origin
 	case "time":
-		v.Int64, _ = strconv.ParseInt(v.Origin, 10, 64)
+		v.Time, err = time.Parse(layout, v.Origin)
 	case "[]float64":
 		var sli = strings.Split(v.Origin, ",")
 		for _, s := range sli {
@@ -430,7 +439,7 @@ func (v *Value) ParseValue() (err error){
 		err = fmt.Errorf("unknown type: %s", v.Type)
 	}
 
-	return err
+	return
 }
 
 func (t *TagInfo) SetMatchFun()(err error) {
