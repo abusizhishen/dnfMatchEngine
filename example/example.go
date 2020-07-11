@@ -11,9 +11,9 @@ func main() {
 		panic(err)
 	}
 	log.Println(engine.Match(map[string]string{"age":"1"}))
-	// output true,nil
+	// output false,nil
 
 	log.Println(engine.Match(map[string]string{"age":"2"}))
-	// output false,nil
+	// output true,nil
 
 }
