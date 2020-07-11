@@ -2,6 +2,7 @@ package engine
 
 import (
 	"errors"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -12,55 +13,149 @@ type testParseCase struct {
 
 var ErrDnfParse = errors.New("")
 
-var testParseCases = []testParseCase{
-	{
-		Dnf: "┐[(age>{1}|0)]",
-		Err: nil,
-	},
-	{
-		"[(age!={1}|0)]",
-		ErrDnfParse,
-	},
-	{
-		"[(age≠{1}|0)]",
-		nil,
-	},
-	{
-		"[()]",
-		nil,
-	},
-	{
-		"[]",
-		nil,
-	},
-	//{
-	//	"()",
-	//	nil,
-	//},
-}
-
 func TestNew(t *testing.T) {
-	fun := func(cas testParseCase) {
-		_, err := New(cas.Dnf)
-		//log.Println(cas.Dnf, engine)
-
-		if err == nil && cas.Err == nil{
-			//pass
-			return
+	t.Run("IntGt", func(t *testing.T) {
+		e,err := New("[(age>{1}|0)]")
+		if err != nil{
+			t.Error(err)
 		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
 
-		if err != nil && cas.Err != nil{
-			//pass
-			return
+	t.Run("IntEq", func(t *testing.T) {
+		e,err := New("[(age={1}|0)]")
+		if err != nil{
+			t.Error(err)
 		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
 
-		t.Log(err)
-		t.Errorf("dnf parse failed dnf: %s result should be: %v",cas.Dnf,cas.Err == nil)
-	}
+	t.Run("IntLt", func(t *testing.T) {
+		e,err := New("[(age≤{1}|0)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
 
-	for _, dnf := range testParseCases {
-		fun(dnf)
-	}
+	t.Run("StringEq", func(t *testing.T) {
+		e,err := New("[(name={foo}|3)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("StringNotEq", func(t *testing.T) {
+		e,err := New("[(name≠{foo}|3)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("TimeGT", func(t *testing.T) {
+		e,err := New("[(date>{2020-07-01 00:00:00}|4)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("TimeGTOrEq", func(t *testing.T) {
+		e,err := New("[(date≥{2020-07-01 00:00:00}|4)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("TimeEq", func(t *testing.T) {
+		e,err := New("[(date={2020-07-01 00:00:00}|4)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("TimeNotEq", func(t *testing.T) {
+		e,err := New("[(date≠{2020-07-01 00:00:00}|4)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("TimeLTOrEq", func(t *testing.T) {
+		e,err := New("[(date≤{2020-07-01 00:00:00}|4)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("TimeLT", func(t *testing.T) {
+		e,err := New("[(date<{2020-07-01 00:00:00}|4)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("InArray", func(t *testing.T) {
+		e,err := New("[(size∈{small,large}|7)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("NotInArray", func(t *testing.T) {
+		e,err := New("[(size∉{small,large}|7)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("EqInArray", func(t *testing.T) {
+		e,err := New("[(size={small,large}|7)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("NotEqInArray", func(t *testing.T) {
+		e,err := New("[(size≠{small,large}|7)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("And", func(t *testing.T) {
+		e,err := New("[(age>{1}|0)^(age>{3}|0)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})	})
+
+	t.Run("Or", func(t *testing.T) {
+		e,err := New("[(age>{1}|0)∨(age>{2}|0)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
+
+	t.Run("Not", func(t *testing.T) {
+		e,err := New("┐[(age>{1}|0)]")
+		if err != nil{
+			t.Error(err)
+		}
+		assert.IsType(t,e, &AdvertTag{})
+	})
 }
 
 type testCase struct {
@@ -69,61 +164,178 @@ type testCase struct {
 	Result bool
 }
 
-var testMatchData = []testCase{
-	{
-		"[(age<{1}|0)]",
-		map[string]string{"age": "0"},
-		true,
-	},
-	{
-		"[(age={1}|0)]",
-		map[string]string{"age": "1"},
-		true,
-	},
-	{
-		"[(age>{1}|0)]",
-		map[string]string{"age": "2"},
-		true,
-	},
-	{
-		"[(age≥{1}|0)]",
-		map[string]string{"age": "2"},
-		true,
-	},
-	{
-		"[(age≠{1}|0)]",
-		map[string]string{"age": "2"},
-		true,
-	},
-	{
-		"[]",
-		map[string]string{"age": "2"},
-		true,
-	},
-	{
-		"[(age≠{1}|0)]",
-		map[string]string{"name": "lisa"},
-		false,
-	},
-}
-
 func TestAdvertTag_Match(t *testing.T) {
-	test := func(cas testCase) bool {
-		engine, err := New(cas.Dnf)
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		result,err :=  engine.Match(cas.Data)
+	t.Run("IntGtMatch", func(t *testing.T) {
+		engine,err := New("[(age>{1}|0)]")
+		data := map[string]string{"age":"2"}
+		result,err := engine.Match(data)
 		if err != nil{
-			t.Logf("case failed:%+v, err:%v",cas,err)
+			t.Error(err)
 		}
-		return result == cas.Result
-	}
+		assert.True(t, result)
+	})
 
-	for _, cas := range testMatchData {
-		if !test(cas) {
-			t.Errorf("test failed result should be %v case: [dnf:%s, data:%v, result:%v]", !cas.Result, cas.Dnf, cas.Data, cas.Result)
+	t.Run("IntGtNotMatch", func(t *testing.T) {
+		engine,err := New("[(age>{1}|0)]")
+		if err != nil{
+			t.Error(err)
 		}
-	}
+		data := map[string]string{"age":"1"}
+		result,err := engine.Match(data)
+		if err != nil{
+			t.Error(err)
+		}
+		assert.False(t, result)
+	})
+
+	t.Run("IntEqMatch", func(t *testing.T) {
+		engine,err := New("[(age={1}|0)]")
+		if err != nil{
+			t.Error(err)
+		}
+		data := map[string]string{"age":"1"}
+		result,err := engine.Match(data)
+		if err != nil{
+			t.Error(err)
+		}
+		assert.True(t, result)
+	})
+
+	t.Run("IntEqNotMatch", func(t *testing.T) {
+		engine,err := New("[(age={1}|0)]")
+		if err != nil{
+			t.Error(err)
+		}
+		data := map[string]string{"age":"3"}
+		result,err := engine.Match(data)
+		if err != nil{
+			t.Error(err)
+		}
+		assert.False(t, result)
+	})
+
+	t.Run("IntLtMatch", func(t *testing.T) {
+		engine,err := New("[(age≤{1}|0)]")
+		if err != nil{
+			t.Error(err)
+		}
+		data := map[string]string{"age":"0"}
+		result,err := engine.Match(data)
+		if err != nil{
+			t.Error(err)
+		}
+		assert.True(t, result)
+	})
+
+	t.Run("IntLtNotMatch", func(t *testing.T) {
+		engine,err := New("[(age≤{1}|0)]")
+		if err != nil{
+			t.Error(err)
+		}
+		data := map[string]string{"age":"2"}
+		result,err := engine.Match(data)
+		if err != nil{
+			t.Error(err)
+		}
+		assert.False(t, result)
+	})
+	
+	t.Run("StringEqMatch", func(t *testing.T) {
+		e,err := New("[(name={foo}|3)]")
+		if err != nil{
+			t.Error(err)
+		}
+		data := map[string]string{"name":"foo"}
+		result,err := e.Match(data)
+		if err != nil{
+			t.Error(err)
+		}
+
+		assert.True(t,result)
+	})
+
+	t.Run("StringEqNotMatch", func(t *testing.T) {
+		e,err := New("[(name={foo}|3)]")
+		if err != nil{
+			t.Error(err)
+		}
+		data := map[string]string{"name":"boo"}
+		result,err := e.Match(data)
+		if err != nil{
+			t.Error(err)
+		}
+
+		assert.False(t,result)
+	})
+
+	t.Run("TimeGTMatchGT", func(t *testing.T) {
+		e,err := New("[(date>{2020-07-01 00:00:00}|4)]")
+		if err != nil{
+			t.Error(err)
+		}
+		data := map[string]string{"date":"2020-07-01 00:00:01"}
+		result,err := e.Match(data)
+		if err != nil{
+			t.Error(err)
+		}
+
+		assert.True(t,result)
+	})
+
+	t.Run("TimeGTMatchEQ", func(t *testing.T) {
+		e,err := New("[(date>{2020-07-01 00:00:00}|4)]")
+		if err != nil{
+			t.Error(err)
+		}
+		data := map[string]string{"date":"2020-07-01 00:00:00"}
+		result,err := e.Match(data)
+		if err != nil{
+			t.Error(err)
+		}
+
+		assert.False(t,result)
+	})
+
+	t.Run("TimeGTNotMatchLt", func(t *testing.T) {
+		e,err := New("[(date>{2020-07-01 00:00:00}|4)]")
+		if err != nil{
+			t.Error(err)
+		}
+		data := map[string]string{"date":"2020-06-30 23:59:59"}
+		result,err := e.Match(data)
+		if err != nil{
+			t.Error(err)
+		}
+
+		assert.False(t,result)
+	})
+
+
+	t.Run("InArrayMatchIn", func(t *testing.T) {
+		e,err := New("[(size∈{small,large}|7)]")
+		if err != nil{
+			t.Error(err)
+		}
+		data := map[string]string{"size":"small"}
+		result,err := e.Match(data)
+		if err != nil{
+			t.Error(err)
+		}
+
+		assert.True(t,result)
+	})
+
+	t.Run("InArrayMatchNotIn", func(t *testing.T) {
+		e,err := New("[(size∈{small,large}|7)]")
+		if err != nil{
+			t.Error(err)
+		}
+		data := map[string]string{"size":"huge"}
+		result,err := e.Match(data)
+		if err != nil{
+			t.Error(err)
+		}
+
+		assert.False(t,result)
+	})
 }
