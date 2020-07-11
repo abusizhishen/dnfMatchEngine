@@ -6,10 +6,14 @@ import (
 )
 
 func main() {
-	engine,err := engine2.New("┐[(age>{1}|0)]")
+	engine,err := engine2.New("[(age>{1}|0)]")
 	if err != nil{
 		panic(err)
 	}
-	match,err := engine.Match(map[string]string{"age":"1"})
-	log.Println(match,err)
+	log.Println(engine.Match(map[string]string{"age":"1"}))
+	// output true,nil
+
+	log.Println(engine.Match(map[string]string{"age":"2"}))
+	// output false,nil
+
 }

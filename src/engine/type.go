@@ -1,10 +1,22 @@
 package engine
 
-type engine interface {
-	Parse(string2 string)
-	Match(map[string]string)bool
+var TypeArr = []string{
+	"int",
+	"float64",
+	"int64",
+	"string",
+	"time",
+	"[]int",
+	"[]float64",
+	"[]string",
+	"[]int64",
+	"[]mixed", // [int or string or float or time... or mixed]
 }
 
-type node engine
-type collection engine
-type token engine
+var TypeMap = map[string]int{}
+
+func init() {
+	for idx, k := range TypeArr {
+		TypeMap[k] = idx
+	}
+}

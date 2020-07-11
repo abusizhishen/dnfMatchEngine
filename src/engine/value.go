@@ -5,26 +5,7 @@ import (
 	"time"
 )
 
-var TypeArr = []string{
-	"int",
-	"float64",
-	"int64",
-	"string",
-	"time",
-	"[]int",
-	"[]float64",
-	"[]string",
-	"[]int64",
-	"[]mixed", // [int or string or float or time... or mixed]
-}
 
-var TypeMap = map[string]int{}
-
-func init() {
-	for idx, k := range TypeArr {
-		TypeMap[k] = idx
-	}
-}
 
 type Value struct {
 	Type       string             `json:"type"`
@@ -39,6 +20,7 @@ type Value struct {
 	IntArr     map[int]string     `json:"int_arr"`
 	Int64Arr   map[int64]string   `json:"int64_arr"`
 	StringArr  map[string]string  `json:"string_arr"`
+	InputValue interface{} `json:"input_value"`
 }
 
 func (v *Value) MarshalJSON() ([]byte, error) {
