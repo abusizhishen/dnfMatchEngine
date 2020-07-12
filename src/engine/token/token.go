@@ -5,6 +5,7 @@ const (
 	And = iota
 	Or
 	Not
+	DefaultRelation
 
 	//symble
 	Gt
@@ -21,10 +22,15 @@ const (
 	Float64
 	String
 	Time
+	IntArr
+	Float64Arr
+	StringArr
+	TimeArr
 
 )
 
-var Identification = map[int]string{
+type Token int
+var Tokens = [...]string{
 	And: "^",
 	Or:  "∨",
 	Not: "┐",
@@ -42,4 +48,16 @@ var Identification = map[int]string{
 	Float64: "float64",
 	String: "string",
 	Time: "time",
+	IntArr: "intArr",
+	Float64Arr: "float64Arr",
+	StringArr: "stringArr",
+	TimeArr: "timeArr",
+}
+
+var Map map[string]int
+
+func init() {
+	for id, s := range Tokens{
+		Map[s] = id
+	}
 }

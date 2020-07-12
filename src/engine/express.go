@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/abusizhishen/do-once-while-concurrent/src"
+	"github.com/abusizhishen/expressMatchEngine/src/engine/token"
 	json "github.com/json-iterator/go"
 	"regexp"
 	"strconv"
@@ -106,7 +107,7 @@ func (t *TagInfo) TimeMatch(value string)  (result bool,err error)  {
 	}
 
 	switch t.Symbol {
-	case "≥":
+	case token.GtOrEq:
 		return t.Value.Time.Equal(tim)||t.Value.Time.Before(tim),nil
 	case ">":
 		return t.Value.Time.Before(tim),nil
