@@ -14,7 +14,7 @@ import (
 
 const (
 	tagDefaultValue = "-"
-	tagTodayValue = "0100-01-01"
+	tagTodayValue   = "0100-01-01"
 )
 
 type DnfMap map[string]interface{}
@@ -28,7 +28,7 @@ type TagInfo struct {
 	Symbol      string `json:"symbol"`
 	Value       Value  `json:"value"`
 	TagType     int    `json:"tag_type"`
-	Match       func(str string)  (result bool,err error)
+	Match       func(str string) (result bool, err error)
 	TypeReflect string `json:"type_reflect"`
 	Dnf         string `json:"dnf"`
 	Relation    string `json:"relation"`
@@ -87,8 +87,7 @@ func (t *TagInfo) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-
-func (t *TagInfo) TimeMatch(value string)  (result bool,err error)  {
+func (t *TagInfo) TimeMatch(value string) (result bool, err error) {
 	switch value {
 	case tagDefaultValue:
 		switch t.Symbol {
@@ -107,21 +106,21 @@ func (t *TagInfo) TimeMatch(value string)  (result bool,err error)  {
 
 	switch t.Symbol {
 	case "≥":
-		return t.Value.Time.Equal(tim)||t.Value.Time.Before(tim),nil
+		return t.Value.Time.Equal(tim) || t.Value.Time.Before(tim), nil
 	case ">":
-		return t.Value.Time.Before(tim),nil
+		return t.Value.Time.Before(tim), nil
 	case "=":
-		return t.Value.Time.Equal(tim),nil
+		return t.Value.Time.Equal(tim), nil
 	case "≤":
-		return t.Value.Time.After(tim)||t.Value.Time.Equal(tim),nil
+		return t.Value.Time.After(tim) || t.Value.Time.Equal(tim), nil
 	case "<":
-		return t.Value.Time.After(tim),nil
+		return t.Value.Time.After(tim), nil
 	default:
-		return false,nil
+		return false, nil
 	}
 }
 
-func (t *TagInfo) Float64Match(value string)  (result bool,err error)  {
+func (t *TagInfo) Float64Match(value string) (result bool, err error) {
 	if value == tagDefaultValue {
 		value = "0"
 	}
@@ -132,32 +131,32 @@ func (t *TagInfo) Float64Match(value string)  (result bool,err error)  {
 
 	switch t.Symbol {
 	case "<":
-		result =  data < t.Value.Float64
+		result = data < t.Value.Float64
 	case "≤":
-		result =  data <= t.Value.Float64
+		result = data <= t.Value.Float64
 	case "=":
-		result =  data == t.Value.Float64
+		result = data == t.Value.Float64
 	case "≠":
-		result =  data != t.Value.Float64
+		result = data != t.Value.Float64
 	case "≥":
-		result =  data >= t.Value.Float64
+		result = data >= t.Value.Float64
 	case ">":
-		result =  data > t.Value.Float64
+		result = data > t.Value.Float64
 	default:
-		result =  false
+		result = false
 	}
-	
-	return result,err
+
+	return result, err
 }
 
-func (t *TagInfo) IntMatch(value string)  (result bool,err error)  {
+func (t *TagInfo) IntMatch(value string) (result bool, err error) {
 	if value == tagDefaultValue {
 		//tool.OutputInfo(fmt.Sprintf("tag:%+v,标签%s返回值异常 %v", t, t.TypeReflect, value))
 		value = "0"
 	}
 	data, err := strconv.Atoi(value)
 	if err != nil {
-		return false,err
+		return false, err
 	}
 	switch t.Symbol {
 	case "<":
@@ -165,28 +164,28 @@ func (t *TagInfo) IntMatch(value string)  (result bool,err error)  {
 	case "≤":
 		result = data <= t.Value.Int
 	case "=":
-		result =  data == t.Value.Int	
+		result = data == t.Value.Int
 	case "≠":
-		result =  data != t.Value.Int
+		result = data != t.Value.Int
 	case "≥":
-		result =  data >= t.Value.Int
+		result = data >= t.Value.Int
 	case ">":
-		result =  data > t.Value.Int
+		result = data > t.Value.Int
 	default:
-		result =  false
+		result = false
 	}
-	
-	return result,err
+
+	return result, err
 }
 
-func (t *TagInfo) Int64Match(value string)  (result bool,err error)  {
+func (t *TagInfo) Int64Match(value string) (result bool, err error) {
 	if value == tagDefaultValue {
 		//tool.OutputInfo(fmt.Sprintf("tag:%+v,标签%s返回值异常 %v", t, t.TypeReflect, value))
 		value = "0"
 	}
 	data, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
-		return false,err
+		return false, err
 	}
 
 	switch t.Symbol {
@@ -205,24 +204,24 @@ func (t *TagInfo) Int64Match(value string)  (result bool,err error)  {
 	default:
 		result = false
 	}
-	
-	return result,err
+
+	return result, err
 }
 
-func (t *TagInfo) StringMatch(value string)  (result bool,err error)  {
+func (t *TagInfo) StringMatch(value string) (result bool, err error) {
 	switch t.Symbol {
 	case "=":
-		result =  t.Value.String == value
+		result = t.Value.String == value
 	case "≠":
-		result =  t.Value.String != value
+		result = t.Value.String != value
 	default:
-		result =  false
+		result = false
 	}
 
-	return result,err
+	return result, err
 }
 
-func (t *TagInfo) StringArrMatch(value string)  (result bool,err error)  {
+func (t *TagInfo) StringArrMatch(value string) (result bool, err error) {
 	data := strings.Split(strings.Trim(value, "[]"), ",")
 	for k, v := range data {
 		data[k] = strings.Trim(v, `"`)
@@ -232,8 +231,8 @@ func (t *TagInfo) StringArrMatch(value string)  (result bool,err error)  {
 	case "∈":
 		for _, v := range data {
 			if _, ok := t.Value.StringArr[v]; ok {
-				result =  true
-			}else{
+				result = true
+			} else {
 				result = false
 				break
 			}
@@ -242,21 +241,21 @@ func (t *TagInfo) StringArrMatch(value string)  (result bool,err error)  {
 	case "∉":
 		for _, v := range data {
 			if _, ok := t.Value.StringArr[v]; ok {
-				result =  false
+				result = false
 				break
 			}
 		}
 
-		result =  true
+		result = true
 
 	default:
-		result =  false
+		result = false
 	}
 
-	return result,err
+	return result, err
 }
 
-func (t *TagInfo) IntArrMatch(value string)  (result bool,err error)  {
+func (t *TagInfo) IntArrMatch(value string) (result bool, err error) {
 	strData := strings.Split(strings.Trim(value, "[]"), ",")
 	var data []int
 	for _, str := range strData {
@@ -271,33 +270,33 @@ func (t *TagInfo) IntArrMatch(value string)  (result bool,err error)  {
 	case "∈":
 		for _, v := range data {
 			if _, ok := t.Value.IntArr[v]; ok {
-				result =  true
+				result = true
 			}
 		}
-		result =  false
+		result = false
 	case "∉":
 		for _, v := range data {
 			if _, ok := t.Value.IntArr[v]; ok {
-				result =  false
+				result = false
 			}
 		}
 
-		result =  true
+		result = true
 
 	default:
-		result =  false
+		result = false
 	}
-	
-	return result,err
+
+	return result, err
 }
 
-func (t *TagInfo) Int64ArrMatch(value string)  (result bool,err error)  {
+func (t *TagInfo) Int64ArrMatch(value string) (result bool, err error) {
 	strData := strings.Split(strings.Trim(value, "[]"), ",")
 	var data []int64
 	for _, str := range strData {
 		v, err := strconv.ParseInt(str, 10, 64)
 		if err != nil {
-			return false,err
+			return false, err
 		}
 		data = append(data, v)
 	}
@@ -320,11 +319,11 @@ func (t *TagInfo) Int64ArrMatch(value string)  (result bool,err error)  {
 	default:
 		result = false
 	}
-	
-	return result,err
+
+	return result, err
 }
 
-func (t *TagInfo) Float64ArrMatch(value string)  (result bool,err error)  {
+func (t *TagInfo) Float64ArrMatch(value string) (result bool, err error) {
 	strData := strings.Split(strings.Trim(value, "[]"), ",")
 	var data []float64
 	for _, str := range strData {
@@ -339,29 +338,29 @@ func (t *TagInfo) Float64ArrMatch(value string)  (result bool,err error)  {
 	case "∈":
 		for _, v := range data {
 			if _, ok := t.Value.Float64Arr[v]; ok {
-				result =  true
+				result = true
 			}
 		}
-		result =  false
+		result = false
 	case "∉":
 		for _, v := range data {
 			if _, ok := t.Value.Float64Arr[v]; ok {
-				result =  false
+				result = false
 			}
 		}
-		result =  true
+		result = true
 	default:
-		result =  false
+		result = false
 	}
-	
-	return result,err
+
+	return result, err
 }
 
-func (t *TagInfo) Init() (err error){
+func (t *TagInfo) Init() (err error) {
 	t.Value.Init()
 	t.SetValueType()
 
-	funs := []func()(err error){
+	funs := []func() (err error){
 		t.Value.ParseValue,
 		t.SetMatchFun,
 		t.SetFunRelation,
@@ -369,7 +368,7 @@ func (t *TagInfo) Init() (err error){
 
 	for _, fun := range funs {
 		err = fun()
-		if err != nil{
+		if err != nil {
 			return
 		}
 	}
@@ -377,7 +376,7 @@ func (t *TagInfo) Init() (err error){
 	return
 }
 
-func (t *TagInfo) SetFunRelation() (err error){
+func (t *TagInfo) SetFunRelation() (err error) {
 	switch t.Relation {
 	case "", "∧":
 		t.RelationFun = OutAnd
@@ -399,7 +398,7 @@ func (t *TagInfo) SetValueType() {
 	t.Value.Type = t.TypeReflect
 }
 
-func (v *Value) ParseValue() (err error){
+func (v *Value) ParseValue() (err error) {
 	switch v.Type {
 	case "float64":
 		v.Float64, err = strconv.ParseFloat(v.Origin, 64)
@@ -442,7 +441,7 @@ func (v *Value) ParseValue() (err error){
 	return
 }
 
-func (t *TagInfo) SetMatchFun()(err error) {
+func (t *TagInfo) SetMatchFun() (err error) {
 	switch t.TypeReflect {
 	case "time":
 		t.Match = t.TimeMatch
@@ -470,15 +469,9 @@ func (t *TagInfo) SetMatchFun()(err error) {
 	return err
 }
 
-///**
-//广告标签结构体数组
-// */
-//type AdTag []FirstLevel
-
 /**
 一级标签关系
 */
-
 
 type FirstLevel struct {
 	Cond        []*TagInfo `json:"cond"`
@@ -550,8 +543,8 @@ func (f *FirstLevel) Unmarshal(data []byte) error {
 	return nil
 }
 
-func (f *FirstLevel) Init() (err error){
-	var funs = []func()error{
+func (f *FirstLevel) Init() (err error) {
+	var funs = []func() error{
 		f.SetFuncIn,
 		f.SetFuncOut,
 		f.CondInit,
@@ -559,7 +552,7 @@ func (f *FirstLevel) Init() (err error){
 
 	for _, f := range funs {
 		err = f()
-		if err != nil{
+		if err != nil {
 			return
 		}
 	}
@@ -567,7 +560,7 @@ func (f *FirstLevel) Init() (err error){
 	return
 }
 
-func (f *FirstLevel) SetFuncIn() (err error){
+func (f *FirstLevel) SetFuncIn() (err error) {
 	switch f.In {
 	case "∧", "":
 		f.FuncIn = And
@@ -583,7 +576,7 @@ func (f *FirstLevel) SetFuncIn() (err error){
 	return
 }
 
-func (f *FirstLevel) SetFuncOut()(err error) {
+func (f *FirstLevel) SetFuncOut() (err error) {
 	switch f.Out {
 	case "∧", "":
 		f.FuncOut = OutAnd
@@ -591,18 +584,18 @@ func (f *FirstLevel) SetFuncOut()(err error) {
 		f.FuncOut = Not
 	default:
 		//panic("逻辑关系错误 " + f.Out)
-//		f.FuncOut = OutAnd
+		//		f.FuncOut = OutAnd
 		err = fmt.Errorf("逻辑关系错误:%s", f.Out)
 	}
 
 	return
 }
 
-func (f *FirstLevel) CondInit() (err error){
+func (f *FirstLevel) CondInit() (err error) {
 	f.TagsMap = make(map[string]string)
 	for k, t := range f.Cond {
 		err = t.Init()
-		if err != nil{
+		if err != nil {
 			return err
 		}
 		f.TagsMap[t.Id] = ""
@@ -612,11 +605,11 @@ func (f *FirstLevel) CondInit() (err error){
 	return
 }
 
-func (f *FirstLevel) Match(values map[string]string)  (result bool,err error)  {
+func (f *FirstLevel) Match(values map[string]string) (result bool, err error) {
 	var resultArr = make([]bool, 0, len(f.Cond))
 	for _, t := range f.Cond {
-		t.Result,err = t.Match(values[t.Id])
-		if err != nil{
+		t.Result, err = t.Match(values[t.Id])
+		if err != nil {
 			return false, err
 		}
 		resultArr = append(resultArr, t.RelationFun(t.Result))
@@ -624,7 +617,7 @@ func (f *FirstLevel) Match(values map[string]string)  (result bool,err error)  {
 
 	f.ResultIn = f.FuncIn(resultArr)
 	f.ResultOut = f.FuncOut(f.ResultIn)
-	return f.ResultOut,nil
+	return f.ResultOut, nil
 }
 
 func And(data []bool) bool {
@@ -665,7 +658,7 @@ type AdvertTag struct {
 	IsInit   bool              `json:"is_init"`
 	sync.RWMutex
 	DoOnceSameTime src.DoOnce `json:"-"`
-	MatchResult    bool           `json:"match_result"`
+	MatchResult    bool       `json:"match_result"`
 }
 
 func (a *AdvertTag) MarshalJSON() ([]byte, error) {
@@ -713,7 +706,7 @@ func (a *AdvertTag) Unmarshal(data []byte) error {
 	return nil
 }
 
-func (a *AdvertTag) Init()(err error) {
+func (a *AdvertTag) Init() (err error) {
 	if a.IsInit {
 		return
 	}
@@ -740,24 +733,24 @@ func (a *AdvertTag) Init()(err error) {
 }
 
 /*
-广告标签和用户标签匹配方法,匹配则返回true
+标签匹配方法,匹配则返回true
 */
-func (a *AdvertTag) Match(tagValues map[string]string) (result bool,err error) {
+func (a *AdvertTag) Match(tagValues map[string]string) (result bool, err error) {
 	for _, t := range a.AdTag {
-		t.ResultOut,err = t.Match(tagValues)
-		if err != nil{
+		t.ResultOut, err = t.Match(tagValues)
+		if err != nil {
 			return false, err
 		}
 		if !t.ResultOut {
-			return t.ResultOut,nil
+			return t.ResultOut, nil
 		}
 	}
 
 	a.MatchResult = true
-	return a.MatchResult,nil
+	return a.MatchResult, nil
 }
 
-func New(dnf string)(a *AdvertTag,err error) {
+func New(dnf string) (a *AdvertTag, err error) {
 	a = new(AdvertTag)
 	a.Dnf = dnf
 	var express = `(∧|∨|┐){0,1}(\[.*?\])`
@@ -785,7 +778,7 @@ func New(dnf string)(a *AdvertTag,err error) {
 			continue
 		}
 		err = firstLevel.Parse(dnf[2])
-		if err != nil{
+		if err != nil {
 			return nil, err
 		}
 		if len(firstLevel.Cond) > 0 {
@@ -803,7 +796,7 @@ func New(dnf string)(a *AdvertTag,err error) {
 }
 
 //[(exp_first_attend_status∈{0.000000,1.000000}|4)∧(exp_attend_num={1}|2)]
-func (f *FirstLevel) Parse(dnf string) (err error){
+func (f *FirstLevel) Parse(dnf string) (err error) {
 	f.Dnf = dnf
 	var express = `(∧|∨|┐){0,1}\(.*?\)`
 	reg := regexp.MustCompile(express)
@@ -819,7 +812,7 @@ func (f *FirstLevel) Parse(dnf string) (err error){
 		}
 		var t TagInfo
 		err = t.Parse(dnf)
-		if err != nil{
+		if err != nil {
 			return err
 		}
 
@@ -831,19 +824,19 @@ func (f *FirstLevel) Parse(dnf string) (err error){
 }
 
 // (exp_first_attend_status∈{0.000000,1.000000}|4)
-func (t *TagInfo) Parse(dnf string)(err error) {
+func (t *TagInfo) Parse(dnf string) (err error) {
 	t.Dnf = dnf
 	var express = `^(∧|∨|┐){0,1}\(([\w_\-\.]+)(∈|∉|=|≠|<|≤|≥|>){1}\{(.*?)}{1}\|(\d+)\)$`
 	reg := regexp.MustCompile(express)
 	d := reg.FindAllStringSubmatch(t.Dnf, -1)
 
 	if len(d) != 1 {
-		return fmt.Errorf("taginfo正则匹配异常:%s",dnf)
+		return fmt.Errorf("taginfo正则匹配异常:%s", dnf)
 	}
 
 	s := d[0]
 	if len(s) != 6 {
-		return fmt.Errorf("taginfo正则匹配异常:%s",dnf)
+		return fmt.Errorf("taginfo正则匹配异常:%s", dnf)
 	}
 
 	t.Relation = s[1]

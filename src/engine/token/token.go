@@ -21,7 +21,6 @@ const (
 	Float64
 	String
 	Time
-
 )
 
 var Identification = map[int]string{
@@ -29,17 +28,17 @@ var Identification = map[int]string{
 	Or:  "∨",
 	Not: "┐",
 
-	Gt: ">",
+	Gt:     ">",
 	GtOrEq: "≥",
-	Eq: "=",
-	NotEq: "≠",
+	Eq:     "=",
+	NotEq:  "≠",
 	LtOrEq: "≤",
-	Lt: "<",
-	In: "∈",
-	NotIn: "∉",
+	Lt:     "<",
+	In:     "∈",
+	NotIn:  "∉",
 
-	Int: "int",
+	Int:     "int",
 	Float64: "float64",
-	String: "string",
-	Time: "time",
+	String:  "string",
+	Time:    "time",
 }

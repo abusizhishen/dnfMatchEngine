@@ -5,8 +5,6 @@ import (
 	"time"
 )
 
-
-
 type Value struct {
 	Type       string             `json:"type"`
 	Origin     string             `json:"origin"`
@@ -20,7 +18,7 @@ type Value struct {
 	IntArr     map[int]string     `json:"int_arr"`
 	Int64Arr   map[int64]string   `json:"int64_arr"`
 	StringArr  map[string]string  `json:"string_arr"`
-	InputValue interface{} `json:"input_value"`
+	InputValue interface{}        `json:"input_value"`
 }
 
 func (v *Value) MarshalJSON() ([]byte, error) {
@@ -101,7 +99,7 @@ func (v *Value) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (v *Value) Init(){
+func (v *Value) Init() {
 	v.Float64Arr = make(map[float64]string)
 	v.IntArr = make(map[int]string)
 	v.Int64Arr = make(map[int64]string)
